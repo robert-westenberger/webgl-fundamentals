@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack",
-    "watch": "tsc --watch",
+    "watch": "webpack-dev-server",
     "server": "npx http-server ./",
     "serve": "webpack serve --static=./public"
   },
