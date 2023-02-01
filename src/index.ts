@@ -8,7 +8,6 @@ if (!canvas) {
 }
 
 const gl = canvas.getContext("webgl2");
-
     if (!gl) {
         throw Error("No WebGL Rendering Context");
     }
