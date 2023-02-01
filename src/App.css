@@ -1,0 +1,6 @@
+#primaryRenderingContext {
+  width: 400px;
+  height: 300px;
+  outline: 1px dashed black;
+  margin: 100px;
+}
