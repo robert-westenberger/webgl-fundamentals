@@ -1,9 +1,10 @@
 /**
  * 
- * @param gl - WebGL Rendering Context
- * @param vertexShader - A vertex shader loaded into the rendering context
- * @param fragmentShader - A fragment shader loaded into the rendering context
- * @returns 
+ * @param gl - WebGL rendering context
+ * @param x - x coord of top left corner
+ * @param y - y coord of top left corner
+ * @param width - rectangle width
+ * @param height - rectangle height
  */
 export function setRectangle(
     gl: WebGL2RenderingContext, 
