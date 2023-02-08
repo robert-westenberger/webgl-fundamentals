@@ -1,11 +1,4 @@
-/**
- * 
- * @param gl - WebGL Rendering Context
- * @param vertexShader - A vertex shader loaded into the rendering context
- * @param fragmentShader - A fragment shader loaded into the rendering context
- * @returns 
- */
-export function createProgram(gl: WebGL2RenderingContext, vertexShader: WebGLShader, fragmentShader: WebGLShader) {
+export function createProgramLegacy(gl: WebGL2RenderingContext, vertexShader: WebGLShader, fragmentShader: WebGLShader) {
     const program = gl.createProgram();
     if (!program) {
         throw new Error("Couldn't create program");

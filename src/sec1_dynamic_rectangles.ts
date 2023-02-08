@@ -1,6 +1,6 @@
 import {
     createShader,
-     createProgram,
+     createProgramLegacy,
      resizeCanvasToDisplaySize,
      randomInt,
      setRectangle
@@ -8,7 +8,7 @@ import {
 import {
     // vertexShader2DSource,
      vertexShader2DFlippedSource,
-    fragmentShaderDynamicRectangleSource} from './shaders/index';
+    fragmentShaderDynamicRectangleSource} from './shaders';
 
 
 export function sec1_dynamicRectangles() {
@@ -40,7 +40,7 @@ export function sec1_dynamicRectangles() {
         }
         /* Create a GLSL program by linking our two shaders to the rendering
         context */
-        const program = createProgram(gl, vertexShader, fragmentShader);
+        const program = createProgramLegacy(gl, vertexShader, fragmentShader);
         
         
         if (!program) {

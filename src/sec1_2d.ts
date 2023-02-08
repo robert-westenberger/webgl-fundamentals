@@ -1,12 +1,12 @@
 import {
     createShader,
-     createProgram,
+     createProgramLegacy as createProgram,
      resizeCanvasToDisplaySize
     } from './helpers';
 import {
     // vertexShader2DSource,
      vertexShader2DFlippedSource,
-    fragmentShaderSource} from './shaders/index';
+    fragmentShaderSource} from './shaders';
 
 
 export function sec1_2d() {

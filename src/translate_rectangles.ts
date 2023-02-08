@@ -1,6 +1,6 @@
 import {
     createShader,
-     createProgram,
+     createProgramLegacy,
      resizeCanvasToDisplaySize,
      randomInt,
     setLetterF,
@@ -9,7 +9,7 @@ import {
     } from './helpers';
 import {
     vertexShader2DTranslationSource,
-    fragmentShaderDynamicRectangleSource} from './shaders/index';
+    fragmentShaderDynamicRectangleSource} from './shaders';
 import {ValuePayload} from "./helpers/setupSlider";
 
 
@@ -68,77 +68,80 @@ function drawScene(
 }
 
 export function translate_rectangles() {
-    const canvas =<HTMLCanvasElement> document.getElementById("c");
+    const canvas = <HTMLCanvasElement> document.getElementById("c");
 
     if (!canvas) {
         throw new Error ("Unable to find canvas");
     }
     
     const gl = canvas.getContext("webgl2");
-        if (!gl) {
-            throw Error("No WebGL Rendering Context");
-        }
+    if (!gl) {
+        throw Error("No WebGL Rendering Context");
+    }
     
-        // START PREPROCESSING
-        /* 
-            Vertex shader  computing vertex positions. Will draw points,
-            lines, or triangles.    
-        */
-        const vertexShader = createShader(gl, gl.VERTEX_SHADER, vertexShader2DTranslationSource);
-        /**
-         * Fragment shader to compute a color for each pixel of the primitive 
-         * currently being drawn.
-         */
-        const fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderDynamicRectangleSource);
-        
-        if (!vertexShader || !fragmentShader) {
-            throw new Error("Unable to initialize shaders");
-        }
-        /* Create a GLSL program by linking our two shaders to the rendering
-        context */
-        const program = createProgram(gl, vertexShader, fragmentShader);
-        
-        
-        if (!program) {
-            throw new Error("Unable to initialize program");
-        }
-        // Get position from vertex shader
-        const positionAttributeLocation = gl.getAttribLocation(program, "a_position");
-        
-        // Get uniform location 
-        const resolutionUniformLocation = gl.getUniformLocation(program, "u_resolution");
-        const colorUniformLocation = gl.getUniformLocation(program, "u_color");
-        const translationLocation = gl.getUniformLocation(program, "u_translation");
-        const positionBuffer = gl.createBuffer();
-        // Bind it to ARRAY_BUFFER (think of it as ARRAY_BUFFER = positionBuffer)
-        gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-        setLetterF(gl);
+    // START PREPROCESSING
+    /*
+        Vertex shader  computing vertex positions. Will draw points,
+        lines, or triangles.
+    */
+    const vertexShader = createShader(gl, gl.VERTEX_SHADER, vertexShader2DTranslationSource);
+    /**
+     * Fragment shader to compute a color for each pixel of the primitive
+     * currently being drawn.
+     */
+    const fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderDynamicRectangleSource);
 
-        const translation: [number, number] = [0, 0];
-        const color = [Math.random(), Math.random(), Math.random(), 1];
-        if (!positionBuffer) {
-            throw new Error( "unable to find position buffer");
-        }
-        if (!resolutionUniformLocation) {
-            throw new Error( "unable to find resolution uniform location");
-        }
-        if (!colorUniformLocation) {
-            throw new Error( "unable to find  color uniform location");
-        }
-        if (!translationLocation) {
-            throw new Error( "unable to find translation  location");
-        }
-        drawScene(
-            gl,
-            program,
-            positionAttributeLocation,
-            positionBuffer,
-            resolutionUniformLocation,
-            translationLocation,
-            colorUniformLocation,
-            color,
-            translation
-            );
+    if (!vertexShader || !fragmentShader) {
+        throw new Error("Unable to initialize shaders");
+    }
+    /* Create a GLSL program by linking our two shaders to the rendering
+    context */
+    const program = createProgramLegacy(gl, vertexShader, fragmentShader);
+
+
+    if (!program) {
+        throw new Error("Unable to initialize program");
+    }
+
+    // Get position from vertex shader
+    const positionAttributeLocation = gl.getAttribLocation(program, "a_position");
+
+    // Get uniform location
+    const resolutionUniformLocation = gl.getUniformLocation(program, "u_resolution");
+    const colorUniformLocation = gl.getUniformLocation(program, "u_color");
+    const translationLocation = gl.getUniformLocation(program, "u_translation");
+
+    const positionBuffer = gl.createBuffer();
+    // Bind it to ARRAY_BUFFER (think of it as ARRAY_BUFFER = positionBuffer)
+    gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+    setLetterF(gl);
+
+    const translation: [number, number] = [0, 0];
+    const color = [Math.random(), Math.random(), Math.random(), 1];
+    if (!positionBuffer) {
+        throw new Error( "unable to find position buffer");
+    }
+    if (!resolutionUniformLocation) {
+        throw new Error( "unable to find resolution uniform location");
+    }
+    if (!colorUniformLocation) {
+        throw new Error( "unable to find  color uniform location");
+    }
+    if (!translationLocation) {
+        throw new Error( "unable to find translation  location");
+    }
+
+    drawScene(
+        gl,
+        program,
+        positionAttributeLocation,
+        positionBuffer,
+        resolutionUniformLocation,
+        translationLocation,
+        colorUniformLocation,
+        color,
+        translation
+    );
 
     function updatePosition(index: number) {
         return function(event: Event, ui: ValuePayload) {
@@ -160,7 +163,5 @@ export function translate_rectangles() {
     // Setup a ui.
     setupSlider("#x", {slide: updatePosition(0), max: gl.canvas.width });
     setupSlider("#y", {slide: updatePosition(1), max: gl.canvas.height});
-
-
 }
 
