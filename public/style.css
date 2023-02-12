@@ -17,8 +17,7 @@ canvas {
     background-color: #fff;
     border: 1px solid black;
     /* NOTE: This size is changed if in iframe - see below '.iframe canvas' */
-    width: 400px;
-    height: 300px;
+    margin-right: 15px;
     display: block;
 }
 
@@ -59,7 +58,7 @@ canvas {
     pointer-events: auto;
 }
 .gman-widget-value {
-    float: right;
+
     font-size: medium;
     order: 1;
     min-width: 3em;
