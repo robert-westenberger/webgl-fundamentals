@@ -23,6 +23,7 @@
   },
   "dependencies": {
     "three": "^0.149.0",
+    "twgl.js": "^5.3.0",
     "webgl-debug": "^2.0.1"
   }
 }
