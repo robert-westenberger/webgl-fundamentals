@@ -17,7 +17,7 @@ const vertexShaderSource = `#version 300 es
 
     void main () {
       gl_Position = vec4(position.x/asp, position.yz, 1); 
-          // Note: gl_Position is a A predefined vec4 variable.  It must be set with a vec4 value.
+      // Note: gl_Position is a A predefined vec4 variable.  It must be set with a vec4 value.
       fragNormal = normalize(normal);
     }`;
 
@@ -117,7 +117,11 @@ export function twoDSpaceTWGL() {
   };
 
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+  resizeCanvasToDisplaySize(canvas);
+  gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+  
   gl.useProgram(programInfo.program);
+  
   bufferInfoArray.forEach((bufferInfo) => {
     setUniforms(programInfo, uniforms);
     setBuffersAndAttributes(gl, programInfo, bufferInfo);
