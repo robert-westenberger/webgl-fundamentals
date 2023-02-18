@@ -16,11 +16,20 @@ body {
 }
 
 canvas {
-    background-color: #fff;
+    background-color: #f8f9fa;
     border: 1px dotted black;
     /* NOTE: This size is changed if in iframe - see below '.iframe canvas' */
     margin-right: 15px;
     width: 100vw;
     height: 100vh;
     display: block;
+}
+
+.inputList {
+    position: absolute;
+    top: 30px;
+    right: 50px;
+    background-color: rgba(0,0,0,0.05);
+    backdrop-filter: blur(5px);
+    padding: 15px;
 }

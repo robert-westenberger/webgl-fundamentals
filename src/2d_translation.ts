@@ -7,6 +7,7 @@ import {
     drawBufferInfo,
     Arrays
 } from "twgl.js";
+import {ValuePayload} from "./helpers/setupSlider";
 
 const vertexShaderSource = `#version 300 es
  
@@ -57,11 +58,17 @@ const useAspectRatio = true;
 
 export function twoDTranslation() {
     const canvas =<HTMLCanvasElement> document.getElementById("c");
-
+    const xRange = <HTMLInputElement> document.getElementById("x");
+    const yRange = <HTMLInputElement> document.getElementById("y");
     if (!canvas) {
         throw new Error ("Unable to find canvas");
     }
-    
+    if (!xRange) {
+        throw new Error ("Unable to find x range");
+    }
+    if (!yRange) {
+        throw new Error ("Unable to find y range");
+    }
     const gl = canvas.getContext("webgl2");
     if (!gl) {
         throw Error("No WebGL Rendering Context");
@@ -69,7 +76,7 @@ export function twoDTranslation() {
 
 
     const programInfo = createProgramInfo(gl, [vertexShaderSource, fragmentShaderSource]);
-    
+    const translation = [0,0];
     const vertexAttributes: Arrays = {
         a_position: {
             data: [// left column
@@ -96,29 +103,35 @@ export function twoDTranslation() {
                 67, 60,
                 67, 90],
             numComponents: 2
-        },
-        // translation: {
-        //     data: [0,0],
-        //     numComponents: 2
-        // },
-        // resolution: {
-        //     data: [gl.canvas.width, gl.canvas.height],
-        //     numComponents: 2
-        // },
-        // color: new Float32Array([Math.random(), Math.random(), Math.random(), 1])
-    }
+        } }
 
-    // const bufferInfoArray = vertexAttributes.map((d) =>
-    //     createBufferInfoFromArrays(gl, d)
     const bufferInfoArray = createBufferInfoFromArrays(gl, vertexAttributes);
     resizeCanvasToDisplaySize(canvas);
   const uniforms = {
-    // asp: useAspectRatio ? gl.canvas.width / gl.canvas.height : 1,
-      u_translation: [0,0],
+      u_translation: translation,
       u_resolution: [gl.canvas.width, gl.canvas.height],
       u_color: [Math.random(), Math.random(), Math.random(), 1]
   };
 
+
+    function updatePosition(index: number) {
+        return function(event: Event, updatedTranslation: number) {
+            translation[index] = updatedTranslation;
+            setUniforms(programInfo, uniforms);
+            setBuffersAndAttributes(gl!, programInfo, bufferInfoArray);
+            drawBufferInfo(gl!, bufferInfoArray);
+
+        };
+    }
+
+xRange.addEventListener('input', (event ) => {
+    const val = (event.currentTarget as HTMLInputElement)?.value;
+    updatePosition(0)(event, parseInt(val));
+});
+yRange.addEventListener('input', (event ) => {
+    const val = (event.currentTarget as HTMLInputElement)?.value;
+    updatePosition(1)(event, parseInt(val));
+});
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
   gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
