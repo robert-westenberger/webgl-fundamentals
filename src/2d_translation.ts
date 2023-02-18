@@ -118,7 +118,7 @@ export function twoDTranslation() {
         return function(event: Event, updatedTranslation: number) {
             translation[index] = updatedTranslation;
             setUniforms(programInfo, uniforms);
-            setBuffersAndAttributes(gl!, programInfo, bufferInfoArray);
+            gl!.clear(gl!.COLOR_BUFFER_BIT | gl!.DEPTH_BUFFER_BIT);
             drawBufferInfo(gl!, bufferInfoArray);
 
         };
