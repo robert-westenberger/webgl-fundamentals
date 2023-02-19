@@ -63,42 +63,39 @@ export function create2DRotationInput(passedOptions?: Partial<Options>) {
 
     setInterval(function() {
         flash = !flash;
-        if (!moving) {
+        if (moving) {
             drawCircle(renderingContext);
             // drawCircle(ctx, angle);
         }
     }, 500);
 
     drawCircle(renderingContext);
-    // drawCircle(ctx, angle);
 
     function start() {
         moving = true;
         drawCircle(renderingContext);
-        // drawCircle(ctx, angle);
     }
 
     function stop() {
         moving = false;
         drawCircle(renderingContext);
-        // drawCircle(ctx, angle);
     }
 
     function trackMouse(e: MouseEvent) {
         const position = toLocal(e, canvas);
 
         angle = Math.atan2(position.x, position.y);
-        drawCircle(renderingContext);
-        // drawCircle(ctx, angle);
         const v = modClamp(angle + Math.PI, 2 * Math.PI);
-        console.log('in trackMouse...', v);
-        // self._trigger("slide", e, {
-        //     x: Math.sin(v), //circleSin,
-        //     y: Math.cos(v), //circleCos,
-        //     angle: v // ,
-        // });
-    }
+        if (moving) {
+            drawCircle(renderingContext);
 
+            console.log({
+                x: Math.sin(v), //circleSin,
+                y: Math.cos(v), //circleCos,
+                angle: v // ,
+            });
+        }
+    }
     canvas.addEventListener('mousedown', start);
     canvas.addEventListener('mousemove', trackMouse);
     canvas.addEventListener('mouseup', stop);
