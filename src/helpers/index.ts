@@ -5,6 +5,7 @@ export {setLetterF} from "./setLetterF";
 export {setupSlider} from "./setupSlider";
 
 export {createProgramLegacy} from './createProgramLegacy';
+export {create2DRotationInput} from './create2DRotationInput';
 export {
   createProgram,
   resizeCanvasToDisplaySize
