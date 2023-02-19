@@ -56,7 +56,6 @@ void main() {
 
 
 export function twoDRotationInput() {
-    create2DRotationInput();
     const canvas =<HTMLCanvasElement> document.getElementById("c");
 
     if (!canvas) {
@@ -110,17 +109,17 @@ export function twoDRotationInput() {
   };
 
 
-    function updatePosition(index: number) {
-        return function(event: Event, updatedRotation: [number,number]) {
-            rotation[0] = updatedRotation[0];
-            rotation[1] = updatedRotation[1];
-            setUniforms(programInfo, uniforms);
-            gl!.clear(gl!.COLOR_BUFFER_BIT | gl!.DEPTH_BUFFER_BIT);
-            drawBufferInfo(gl!, bufferInfoArray);
+    function updatePosition(updatedRotation: [number,number]) {
+        rotation[0] = updatedRotation[0];
+        rotation[1] = updatedRotation[1];
+        setUniforms(programInfo, uniforms);
+        gl!.clear(gl!.COLOR_BUFFER_BIT | gl!.DEPTH_BUFFER_BIT);
+        drawBufferInfo(gl!, bufferInfoArray);
 
-        };
     }
 
+
+    create2DRotationInput(updatePosition);
 
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 

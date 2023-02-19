@@ -29,7 +29,8 @@ function modClamp(v: number, range: number, opt_rangeStart?: number) {
     return v + start;
 }
 
-export function create2DRotationInput(passedOptions?: Partial<Options>) {
+
+export function create2DRotationInput(onChange:(updatedRotation: [number,number])=> void, passedOptions?: Partial<Options>) {
     const canvas =<HTMLCanvasElement> document.getElementById("rotation");
 
     if (!canvas) {
@@ -65,7 +66,6 @@ export function create2DRotationInput(passedOptions?: Partial<Options>) {
         flash = !flash;
         if (moving) {
             drawCircle(renderingContext);
-            // drawCircle(ctx, angle);
         }
     }, 500);
 
@@ -88,18 +88,12 @@ export function create2DRotationInput(passedOptions?: Partial<Options>) {
         const v = modClamp(angle + Math.PI, 2 * Math.PI);
         if (moving) {
             drawCircle(renderingContext);
-
-            console.log({
-                x: Math.sin(v), //circleSin,
-                y: Math.cos(v), //circleCos,
-                angle: v // ,
-            });
+            onChange([Math.sin(v), Math.cos(v)]);
         }
     }
     canvas.addEventListener('mousedown', start);
     canvas.addEventListener('mousemove', trackMouse);
     canvas.addEventListener('mouseup', stop);
-    // canvas.addEventListener('mousecapture', ??);
 
 
     function toLocal(e: MouseEvent, t: HTMLCanvasElement) {
@@ -176,8 +170,7 @@ export function create2DRotationInput(passedOptions?: Partial<Options>) {
 
             ctx.font = "10pt sans-serif";
             ctx.fillStyle = "rgba(255, 255, 255, 0.5)";
-            //ctx.fillText("X=" + Math.sin(angle).toFixed(3), 10, -gridSize * 0.3);
-            //ctx.fillText("Y=" + (-Math.cos(angle)).toFixed(3), 10, -gridSize * 0.3 + 14);
+
             for (var y = -2; y <= 2; ++y) {
                 for (var x = -2; x <= 2; ++x) {
                     drawText(x, y);
