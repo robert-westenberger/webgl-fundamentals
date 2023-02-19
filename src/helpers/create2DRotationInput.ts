@@ -10,7 +10,7 @@ interface Options {
 const defaultOptions: Options = {
     width: 300,
     height: 300,
-    value: Math.PI / 5,
+    value: 0,
     xLabel: "X=",
     yLabel: "Y=",
 };

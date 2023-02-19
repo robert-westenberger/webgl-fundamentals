@@ -71,7 +71,7 @@ export function twoDRotationInput() {
 
     const programInfo = createProgramInfo(gl, [vertexShaderSource, fragmentShaderSource]);
     const translation = [200,200];
-    const rotation = [0.63, 0.78];
+    const rotation = [0, 1];
     const vertexAttributes: Arrays = {
         a_position: {
             data: [// left column
