@@ -7,7 +7,7 @@ import {
     drawBufferInfo,
     Arrays
 } from "twgl.js";
-import {ValuePayload} from "./helpers/setupSlider";
+import {ValuePayload} from "../helpers/setupSlider";
 
 const vertexShaderSource = `#version 300 es
  
@@ -15,16 +15,19 @@ const vertexShaderSource = `#version 300 es
 // It will receive data from a buffer
 in vec2 a_position;
  
-// Used to pass in the resolution of the canvas
 uniform vec2 u_resolution;
- 
-// translation to add to position
 uniform vec2 u_translation;
+uniform vec2 u_rotation;
  
 // all shaders have a main function
 void main() {
+// Rotate the position
+  vec2 rotatedPosition = vec2(
+     a_position.x * u_rotation.y + a_position.y * u_rotation.x,
+     a_position.y * u_rotation.y - a_position.x * u_rotation.x);
+     
   // Add in the translation
-  vec2 position = a_position + u_translation;
+  vec2 position = rotatedPosition + u_translation;
  
   // convert the position from pixels to 0.0 to 1.0
   vec2 zeroToOne = position / u_resolution;
@@ -51,12 +54,8 @@ void main() {
   outColor = u_color;
 }`;
 
-const useAspectRatio = true;
 
-
-
-
-export function twoDTranslation() {
+export function twoDRotation() {
     const canvas =<HTMLCanvasElement> document.getElementById("c");
     const xRange = <HTMLInputElement> document.getElementById("x");
     const yRange = <HTMLInputElement> document.getElementById("y");
@@ -76,7 +75,8 @@ export function twoDTranslation() {
 
 
     const programInfo = createProgramInfo(gl, [vertexShaderSource, fragmentShaderSource]);
-    const translation = [0,0];
+    const translation = [200,200];
+    const rotation = [0.63, 0.78];
     const vertexAttributes: Arrays = {
         a_position: {
             data: [// left column
@@ -110,13 +110,15 @@ export function twoDTranslation() {
   const uniforms = {
       u_translation: translation,
       u_resolution: [gl.canvas.width, gl.canvas.height],
-      u_color: [Math.random(), Math.random(), Math.random(), 1]
+      u_color: [Math.random(), Math.random(), Math.random(), 1],
+      u_rotation: rotation
   };
 
 
     function updatePosition(index: number) {
-        return function(event: Event, updatedTranslation: number) {
-            translation[index] = updatedTranslation;
+        return function(event: Event, updatedRotation: [number,number]) {
+            rotation[0] = updatedRotation[0];
+            rotation[1] = updatedRotation[1];
             setUniforms(programInfo, uniforms);
             gl!.clear(gl!.COLOR_BUFFER_BIT | gl!.DEPTH_BUFFER_BIT);
             drawBufferInfo(gl!, bufferInfoArray);
@@ -126,11 +128,18 @@ export function twoDTranslation() {
 
 xRange.addEventListener('input', (event ) => {
     const val = (event.currentTarget as HTMLInputElement)?.value;
-    updatePosition(0)(event, parseInt(val));
+    const y = 1 - Math.pow(parseFloat(val), 2);
+
+    yRange.value = y.toString(10);
+    console.log(`${val},${y}`);
+    updatePosition(0)(event, [parseFloat(val),y]);
 });
 yRange.addEventListener('input', (event ) => {
     const val = (event.currentTarget as HTMLInputElement)?.value;
-    updatePosition(1)(event, parseInt(val));
+    const x = 1 - Math.pow(parseFloat(val), 2);
+    xRange.value = x.toString(10);
+    console.log(`${x},${val}`);
+    updatePosition(1)(event,[x, parseFloat(val)] );
 });
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 

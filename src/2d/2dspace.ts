@@ -2,12 +2,12 @@ import {
     createShader,
      createProgramLegacy as createProgram,
      resizeCanvasToDisplaySize
-    } from './helpers';
+    } from '../helpers';
 import {
     // vertexShader2DSource,
     //  vertexShader2DFlippedSource,
     // fragmentShaderSource
-} from './shaders';
+} from '../shaders';
 
 
 const vertexShaderSource = `#version 300 es
