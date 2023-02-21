@@ -44,7 +44,7 @@ function degrees_to_radians(degrees: number)
     return degrees * (Math.PI/180);
 }
 const degreesToRadians = (degrees:number) => degrees * (Math.PI/180);
-export function orthographic3D() {
+export function orthographic3d2dF() {
     const canvas =<HTMLCanvasElement> document.getElementById("c");
 
     if (!canvas) {
