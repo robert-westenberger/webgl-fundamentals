@@ -13,34 +13,45 @@ import {create2DRotationInput} from "../helpers";
 
 
 const vertexShaderSource = `#version 300 es
+ 
+// an attribute is an input (in) to a vertex shader.
+// It will receive data from a buffer
 in vec4 a_position;
+in vec4 a_color;
  
 // A matrix to transform the positions by
 uniform mat4 u_matrix;
+ 
+// a varying the color to the fragment shader
+out vec4 v_color;
  
 // all shaders have a main function
 void main() {
   // Multiply the position by the matrix.
   gl_Position = u_matrix * a_position;
+ 
+  // Pass the color to the fragment shader.
+  v_color = a_color;
 }
 `;
 
 const fragmentShaderSource = `#version 300 es
-
+ 
 precision highp float;
-
-uniform vec4 u_color;
-
+ 
+// the varied color passed from the vertex shader
+in vec4 v_color;
+ 
 // we need to declare an output for the fragment shader
 out vec4 outColor;
-
+ 
 void main() {
-  outColor = u_color;
+  outColor = v_color;
 }`;
 
 
 const degreesToRadians = (degrees:number) => degrees * (Math.PI/180);
-export function orthographic3d3dF() {
+export function orthographic3d3dFMulticolor() {
     const canvas =<HTMLCanvasElement> document.getElementById("c");
 
     if (!canvas) {
@@ -56,9 +67,9 @@ export function orthographic3d3dF() {
     const programInfo = createProgramInfo(gl, [vertexShaderSource, fragmentShaderSource]);
     const translation = [250,200,50];
 
-    const angleX = degreesToRadians(40);
+    const angleX = degreesToRadians(15);
     const angleY = degreesToRadians(25);
-    const angleZ = degreesToRadians(325);
+    const angleZ = degreesToRadians(0);
     const cX = Math.cos(angleX);
     const sX = Math.sin(angleX);
     const cY = Math.cos(angleY);
@@ -247,9 +258,142 @@ export function orthographic3d3dF() {
                 0, 150,   0,
             ],
             numComponents: 3
-        } }
+        },
+        a_color: {
+            data: new Uint8Array([
+                // left column front
+                200,  70, 120,
+                200,  70, 120,
+                200,  70, 120,
+                200,  70, 120,
+                200,  70, 120,
+                200,  70, 120,
 
-    const bufferInfoArray = createBufferInfoFromArrays(gl, vertexAttributes);
+                // top rung front
+                200,  70, 120,
+                200,  70, 120,
+                200,  70, 120,
+                200,  70, 120,
+                200,  70, 120,
+                200,  70, 120,
+
+                // middle rung front
+                200,  70, 120,
+                200,  70, 120,
+                200,  70, 120,
+                200,  70, 120,
+                200,  70, 120,
+                200,  70, 120,
+
+                // left column back
+                80, 70, 200,
+                80, 70, 200,
+                80, 70, 200,
+                80, 70, 200,
+                80, 70, 200,
+                80, 70, 200,
+
+                // top rung back
+                80, 70, 200,
+                80, 70, 200,
+                80, 70, 200,
+                80, 70, 200,
+                80, 70, 200,
+                80, 70, 200,
+
+                // middle rung back
+                80, 70, 200,
+                80, 70, 200,
+                80, 70, 200,
+                80, 70, 200,
+                80, 70, 200,
+                80, 70, 200,
+
+                // top
+                70, 200, 210,
+                70, 200, 210,
+                70, 200, 210,
+                70, 200, 210,
+                70, 200, 210,
+                70, 200, 210,
+
+                // top rung right
+                200, 200, 70,
+                200, 200, 70,
+                200, 200, 70,
+                200, 200, 70,
+                200, 200, 70,
+                200, 200, 70,
+
+                // under top rung
+                210, 100, 70,
+                210, 100, 70,
+                210, 100, 70,
+                210, 100, 70,
+                210, 100, 70,
+                210, 100, 70,
+
+                // between top rung and middle
+                210, 160, 70,
+                210, 160, 70,
+                210, 160, 70,
+                210, 160, 70,
+                210, 160, 70,
+                210, 160, 70,
+
+                // top of middle rung
+                70, 180, 210,
+                70, 180, 210,
+                70, 180, 210,
+                70, 180, 210,
+                70, 180, 210,
+                70, 180, 210,
+
+                // right of middle rung
+                100, 70, 210,
+                100, 70, 210,
+                100, 70, 210,
+                100, 70, 210,
+                100, 70, 210,
+                100, 70, 210,
+
+                // bottom of middle rung.
+                76, 210, 100,
+                76, 210, 100,
+                76, 210, 100,
+                76, 210, 100,
+                76, 210, 100,
+                76, 210, 100,
+
+                // right of bottom
+                140, 210, 80,
+                140, 210, 80,
+                140, 210, 80,
+                140, 210, 80,
+                140, 210, 80,
+                140, 210, 80,
+
+                // bottom
+                90, 130, 110,
+                90, 130, 110,
+                90, 130, 110,
+                90, 130, 110,
+                90, 130, 110,
+                90, 130, 110,
+
+                // left side
+                160, 160, 220,
+                160, 160, 220,
+                160, 160, 220,
+                160, 160, 220,
+                160, 160, 220,
+                160, 160, 220,
+            ]),
+            numComponents: 3
+        }
+    }
+
+    const bufferInfo = createBufferInfoFromArrays(gl, vertexAttributes);
     resizeCanvasToDisplaySize(canvas);
     const uniforms = {
         u_matrix: matrix,
@@ -267,7 +411,7 @@ export function orthographic3d3dF() {
     gl.useProgram(programInfo.program);
 
     setUniforms(programInfo, uniforms);
-    setBuffersAndAttributes(gl, programInfo, bufferInfoArray);
-    drawBufferInfo(gl, bufferInfoArray);
+    setBuffersAndAttributes(gl, programInfo, bufferInfo);
+    drawBufferInfo(gl, bufferInfo);
 
 }
