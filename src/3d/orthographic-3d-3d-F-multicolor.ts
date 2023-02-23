@@ -8,7 +8,6 @@ import {
     Arrays
 } from "twgl.js";
 import {mat4} from "gl-matrix";
-import {create2DRotationInput} from "../helpers";
 
 
 
@@ -67,8 +66,8 @@ export function orthographic3d3dFMulticolor() {
     const programInfo = createProgramInfo(gl, [vertexShaderSource, fragmentShaderSource]);
     const translation = [250,200,50];
 
-    const angleX = degreesToRadians(15);
-    const angleY = degreesToRadians(25);
+    const angleX = degreesToRadians(30);
+    const angleY = degreesToRadians(30);
     const angleZ = degreesToRadians(0);
     const cX = Math.cos(angleX);
     const sX = Math.sin(angleX);
@@ -79,15 +78,23 @@ export function orthographic3d3dFMulticolor() {
     const sx = 1;
     const sy = 1;
     const sz = 1;
-    const projectionWidth = (gl.canvas as HTMLCanvasElement).clientWidth;
-    const projectionHeight = (gl.canvas as HTMLCanvasElement).clientHeight;
-    const projectionDepth = 400;
-    const projectionMatrix = mat4.fromValues(
-        2 / projectionWidth, 0, 0, 0,
-        0, -2 / projectionHeight, 0, 0,
-        0, 0, 2 / projectionDepth, 0,
-        -1, 1, 0, 1
-    )
+    const left = 0;
+    const right = (gl.canvas as HTMLCanvasElement).clientWidth;
+    const bottom = (gl.canvas as HTMLCanvasElement).clientHeight;
+    const top = 0;
+    const near = 400;
+    const far = -400;
+    const orthographicMatrix = mat4.fromValues(
+        2 / (right - left), 0, 0, 0,
+        0, 2 / (top - bottom), 0, 0,
+        0, 0, 2 / (near - far), 0,
+
+        (left + right) / (left - right),
+        (bottom + top) / (bottom - top),
+        (near + far) / (near - far),
+        1,
+    );
+
     const translationMatrix = mat4.fromValues(
         1,  0,  0,  0,
         0,  1,  0,  0,
@@ -120,7 +127,7 @@ export function orthographic3d3dFMulticolor() {
     );
     let matrix = mat4.create();
 
-    matrix = mat4.multiply(matrix, matrix, projectionMatrix);
+    matrix = mat4.multiply(matrix, matrix, orthographicMatrix);
     matrix = mat4.multiply(matrix, matrix, translationMatrix);
     matrix = mat4.multiply(matrix, matrix, xRotationMatrix);
     matrix = mat4.multiply(matrix, matrix, yRotationMatrix);
@@ -394,6 +401,7 @@ export function orthographic3d3dFMulticolor() {
     }
 
     gl.enable(gl.CULL_FACE);
+    gl.enable(gl.DEPTH_TEST);
     const bufferInfo = createBufferInfoFromArrays(gl, vertexAttributes);
     resizeCanvasToDisplaySize(canvas);
     const uniforms = {
