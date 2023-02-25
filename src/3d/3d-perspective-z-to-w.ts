@@ -9,7 +9,13 @@ import {
 } from "twgl.js";
 import {mat4} from "gl-matrix";
 
+function radToDeg(r: number) {
+    return r * 180 / Math.PI;
+}
 
+function degToRad(d: number) {
+    return d * Math.PI / 180;
+}
 
 const vertexShaderSource = `#version 300 es
 
@@ -21,21 +27,13 @@ in vec4 a_color;
 // A matrix to transform the positions by
 uniform mat4 u_matrix;
 
-uniform float u_fudgeFactor;
-
 // a varying the color to the fragment shader
 out vec4 v_color;
 
 // all shaders have a main function
 void main() {
   // Multiply the position by the matrix.
-  vec4 position = u_matrix * a_position;
-
-  // Adjust the z to divide by
-  float zToDivideBy = 1.0 + position.z * u_fudgeFactor;
-
-  // Divide x and y by z.
-  gl_Position = vec4(position.xy / zToDivideBy, position.zw);
+  gl_Position = u_matrix * a_position;
 
   // Pass the color to the fragment shader.
   v_color = a_color;
@@ -58,7 +56,7 @@ void main() {
 
 
 const degreesToRadians = (degrees:number) => degrees * (Math.PI/180);
-export function threeDPerspective() {
+export function threeDPerspectiveZToW() {
     const canvas =<HTMLCanvasElement> document.getElementById("c");
 
     if (!canvas) {
@@ -72,11 +70,11 @@ export function threeDPerspective() {
 
 
     const programInfo = createProgramInfo(gl, [vertexShaderSource, fragmentShaderSource]);
-    const translation = [250,200,50];
+    const translation = [-150,0, -360];
 
-    const angleX = degreesToRadians(30);
-    const angleY = degreesToRadians(30);
-    const angleZ = degreesToRadians(0);
+    const angleX = degreesToRadians(190);
+    const angleY = degreesToRadians(40);
+    const angleZ = degreesToRadians(30);
     const cX = Math.cos(angleX);
     const sX = Math.sin(angleX);
     const cY = Math.cos(angleY);
@@ -86,21 +84,22 @@ export function threeDPerspective() {
     const sx = 1;
     const sy = 1;
     const sz = 1;
-    const left = 0;
-    const right = (gl.canvas as HTMLCanvasElement).clientWidth;
-    const bottom = (gl.canvas as HTMLCanvasElement).clientHeight;
-    const top = 0;
-    const near = 400;
-    const far = -400;
-    const orthographicMatrix = mat4.fromValues(
-        2 / (right - left), 0, 0, 0,
-        0, 2 / (top - bottom), 0, 0,
-        0, 0, 2 / (near - far), 0,
 
-        (left + right) / (left - right),
-        (bottom + top) / (bottom - top),
-        (near + far) / (near - far),
-        1,
+    const width = (gl.canvas as HTMLCanvasElement).clientWidth;
+    const height = (gl.canvas as HTMLCanvasElement).clientHeight;
+
+    const fovInRadians = degToRad(60);
+    const aspect = width / height;
+    const zNear = 1;
+    const zFar = 2000;
+    const f = Math.tan(Math.PI * 0.5 - 0.5 * fovInRadians);
+    const rangeInv = 1.0 / (zNear - zFar);
+    const fudgeFactor = 1;
+    const perspectiveMatrix = mat4.fromValues(
+        f / aspect, 0, 0, 0,
+        0, f, 0, 0,
+        0, 0, (zNear + zFar) * rangeInv, -1,
+        0, 0, zNear * zFar * rangeInv * 2, 0
     );
 
     const translationMatrix = mat4.fromValues(
@@ -133,9 +132,17 @@ export function threeDPerspective() {
         0,  0, sz,  0,
         0,  0,  0,  1,
     );
+
+    const zToWMatrix = mat4.fromValues(
+        1, 0, 0, 0,
+        0, 1, 0, 0,
+        0, 0, 1, fudgeFactor,
+        0, 0, 0, 1,
+    );
     let matrix = mat4.create();
 
-    matrix = mat4.multiply(matrix, matrix, orthographicMatrix);
+    matrix = mat4.multiply(matrix, matrix, zToWMatrix);
+    matrix = mat4.multiply(matrix, matrix, perspectiveMatrix);
     matrix = mat4.multiply(matrix, matrix, translationMatrix);
     matrix = mat4.multiply(matrix, matrix, xRotationMatrix);
     matrix = mat4.multiply(matrix, matrix, yRotationMatrix);
@@ -414,7 +421,6 @@ export function threeDPerspective() {
     resizeCanvasToDisplaySize(canvas);
     const uniforms = {
         u_matrix: matrix,
-        u_fudgeFactor: 0,
         u_color: [Math.random(), Math.random(), Math.random(), 1],
     };
 

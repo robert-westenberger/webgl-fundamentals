@@ -9,14 +9,16 @@
 // import {multipleDifferentShapes} from "./2d/multipleDifferentShapes";
 // import {orthographic3d2dF} from "./3d/orthographic-3d-2d-F";
 // import {orthographic3d3dF} from "./3d/orthographic-3d-3d-F";
-import {threeDPerspective} from "./3d/3d-perspective";
+// import {threeDPerspective} from "./3d/3d-perspective";
+// import {threeDPerspectiveZToW} from "./3d/3d-perspective-z-to-w";
+import {cameras} from "./3d/cameras";
 // import {twoDScale} from "./2d/2d_scale";
 // import {twoDSpaceTWGL} from "./2dspace_twgl";
 // import {sec1_2d} from './sec1_2d';
 // import {sec1_dynamicRectangles} from './sec1_dynamic_rectangles'
 // import {translate_rectangles} from "./translate_rectangles";
 // twoDSpace();
-threeDPerspective();
+cameras();
 // sec1();
 // sec1_2d();
 // translate_rectangles();
