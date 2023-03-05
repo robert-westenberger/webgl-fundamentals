@@ -85,13 +85,25 @@ export function textures() {
     gl.vertexAttribPointer(1, 2, gl.FLOAT, false,0, 0);
     gl.enableVertexAttribArray(1);
 
-    const texture = gl.createTexture();
+    const loadImage = () => new Promise<HTMLImageElement>(resolve => {
+       const image = new Image();
+       image.addEventListener('load', () => resolve(image));
+       image.src = './image.png';
+    });
+    const run = async () => {
+        const image = await loadImage();
 
-    gl.bindTexture(gl.TEXTURE_2D, texture);
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, 4, 4, 0, gl.RGB, gl.UNSIGNED_BYTE, pixels);
+        gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+        const texture = gl.createTexture();
 
-    // gl.generateMipmap(gl.TEXTURE_2D);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-    gl.drawArrays(gl.TRIANGLES, 0, 3);
+        gl.bindTexture(gl.TEXTURE_2D, texture);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, 500, 300, 0, gl.RGB, gl.UNSIGNED_BYTE, image);
+
+        // gl.generateMipmap(gl.TEXTURE_2D);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+        gl.drawArrays(gl.TRIANGLES, 0, 3);
+    };
+
+    run();
 }
